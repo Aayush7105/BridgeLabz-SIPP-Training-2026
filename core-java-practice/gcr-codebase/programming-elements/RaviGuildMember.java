@@ -1,7 +1,7 @@
 
 import java.util.*;
 
-public class task1 {
+public class RaviGuildMember {
 
     public static void main(String args[]) {
         Scanner sc = new Scanner(System.in);
