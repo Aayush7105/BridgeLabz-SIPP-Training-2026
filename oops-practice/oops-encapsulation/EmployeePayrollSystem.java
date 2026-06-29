@@ -2,7 +2,6 @@ abstract class Employee {
 
     private int employeeId;
     private String employeeName;
-
     Employee(int employeeId, String employeeName) {
         setEmployeeId(employeeId);
         setEmployeeName(employeeName);
