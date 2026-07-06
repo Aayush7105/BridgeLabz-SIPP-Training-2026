@@ -1,37 +1,64 @@
+class Vehicle {
+}
 
-class student {
-
-    String name;
-    int rollNumber;
-    double marks;
-
-    public student(String name, int rollNumber, double marks) {
-        this.name = name;
-        this.rollNumber = rollNumber;
-        this.marks = marks;
-    }
-
-    void displayDetails() {
-        System.out.println("Name: " + name + " Roll Number: " + rollNumber + " Marks: " + marks);
-    }
-
-    static void displayAll(student[] s) {
-        for (student i : s) {
-            System.out.println("Name: " + i.name + " Roll Number: " + i.rollNumber + " Marks: " + i.marks);
-        }
+class Car extends Vehicle {
+    double fuelCost(int km) {
+        return km * 6;
     }
 }
 
-class Main {
+class Bus extends Vehicle {
+    double fuelCost(int km) {
+        return km * 12;
+    }
+}
 
+
+class Bike extends Vehicle {
+    double fuelCost(int km) {
+        return km * 2;
+    }
+}
+
+class ElectricCar extends Vehicle {
+    double fuelCost(int km) {
+        return km * 1;
+    }
+}
+
+public class Main {
     public static void main(String[] args) {
-        student s1 = new student("Advay Sharma", 21, 80.8);
-        student s2 = new student("Adsdvay Sharma", 21, 80.8);
-        student s3 = new student("sdf Sharma", 21, 80.8);
-        student s4 = new student("sdfdsf Sharma", 21, 80.8);
-        student s5 = new student("fdaf Sharma", 21, 80.8);
-        student[] s = {s1, s2, s3, s4, s5};
-        student.displayAll(s);
-        // s1.displayDetails();
+
+        Vehicle[] vehicles = {
+            new Car(),
+            new Bus(),
+            new Bike(),
+            new ElectricCar()
+        };
+
+        int km = 10;
+
+        for (Vehicle v : vehicles) {
+
+            if (v instanceof Car) {
+                Car c = (Car) v;
+                System.out.println(c.fuelCost(km));
+            }
+
+            else if (v instanceof Bus) {
+                Bus b = (Bus) v;
+                System.out.println(b.fuelCost(km));
+            }
+
+            else if (v instanceof Bike) {
+                Bike b = (Bike) v;
+                System.out.println(b.fuelCost(km));
+            }
+
+            else if (v instanceof ElectricCar) {
+                ElectricCar e = (ElectricCar) v;
+                System.out.println(e.fuelCost(km));
+            }
+        }
     }
 }
