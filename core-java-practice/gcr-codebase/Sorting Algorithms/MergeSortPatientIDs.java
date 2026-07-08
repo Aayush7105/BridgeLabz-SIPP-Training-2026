@@ -19,7 +19,6 @@ public class MergeSortPatientIDs {
                         n = Integer.parseInt(cleaned);
                         break;
                     } catch (NumberFormatException e) {
-                        // ignore
                     }
                 }
             }
@@ -41,7 +40,6 @@ public class MergeSortPatientIDs {
             try {
                 patientIDs[count++] = Integer.parseInt(cleaned);
             } catch (NumberFormatException e) {
-                // ignore
             }
         }
         
