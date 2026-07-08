@@ -40,7 +40,6 @@ public class MergeSortCustomerOrderValues {
             try {
                 orderValues[count++] = Long.parseLong(cleaned);
             } catch (NumberFormatException e) {
-                // ignore
             }
         }
         
