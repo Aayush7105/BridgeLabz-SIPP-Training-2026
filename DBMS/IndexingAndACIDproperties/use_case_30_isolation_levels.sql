@@ -1,0 +1,65 @@
+-- Use Case 30: run the marked blocks in TWO separate MySQL sessions.
+-- MySQL/InnoDB does not allow dirty reads at READ COMMITTED or stronger.
+
+-- One-time sample row (run once):
+-- INSERT INTO covid_cases (country, case_date, infection_rate)
+-- VALUES ('Isolation Demo', '2026-07-22', 1.0000);
+
+-- A. Dirty read demonstration and prevention
+-- Session A:
+-- SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
+-- START TRANSACTION;
+-- UPDATE covid_cases SET infection_rate = 99.0000
+-- WHERE country = 'Isolation Demo' AND case_date = '2026-07-22';
+-- -- Do not commit yet.
+--
+-- Session B (dirty read is possible at READ UNCOMMITTED):
+-- SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
+-- SELECT infection_rate FROM covid_cases
+-- WHERE country = 'Isolation Demo' AND case_date = '2026-07-22';
+--
+-- Prevention: use READ COMMITTED (or stronger) in Session B.
+-- SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED;
+-- START TRANSACTION;
+-- SELECT infection_rate FROM covid_cases
+-- WHERE country = 'Isolation Demo' AND case_date = '2026-07-22';
+-- COMMIT;
+-- Session A: ROLLBACK;
+
+-- B. Non-repeatable read and prevention
+-- Session A at READ COMMITTED:
+-- SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED;
+-- START TRANSACTION;
+-- SELECT infection_rate FROM covid_cases WHERE country = 'Isolation Demo';
+-- -- Session B commits an UPDATE to the same row here.
+-- SELECT infection_rate FROM covid_cases WHERE country = 'Isolation Demo';
+-- -- Values can differ: non-repeatable read.
+-- COMMIT;
+--
+-- Prevention: Session A uses REPEATABLE READ, so both ordinary SELECTs see
+-- the same transaction snapshot.
+-- SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+
+-- C. Phantom read and prevention
+-- Session A:
+-- SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED;
+-- START TRANSACTION;
+-- SELECT COUNT(*) FROM covid_cases
+-- WHERE country = 'Isolation Demo' AND case_date >= '2026-07-01';
+-- -- Session B INSERTs and COMMITs another matching row here.
+-- SELECT COUNT(*) FROM covid_cases
+-- WHERE country = 'Isolation Demo' AND case_date >= '2026-07-01';
+-- -- Count can increase: phantom read.
+-- COMMIT;
+--
+-- Prevention option 1: REPEATABLE READ for consistent non-locking reads.
+-- SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+-- START TRANSACTION;
+-- SELECT COUNT(*) FROM covid_cases
+-- WHERE country = 'Isolation Demo' AND case_date >= '2026-07-01';
+-- -- A repeated SELECT sees the same snapshot.
+-- COMMIT;
+--
+-- Prevention option 2: SERIALIZABLE for strictest isolation, at the cost of
+-- reduced concurrency. MySQL may block conflicting inserts until COMMIT.
+-- SET SESSION TRANSACTION ISOLATION LEVEL SERIALIZABLE;
